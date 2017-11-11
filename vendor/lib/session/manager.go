@@ -19,7 +19,7 @@ type Manager struct {
 // Time until session is destroyed
 const lifespan = 3600 * 3 // 3 hours
 // Cookie name to save the session ID with
-const cookieName = ""
+const cookieName = "go-webapp-sessionid"
 
 // Singleton storage
 var sessionManager = Manager{
