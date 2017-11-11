@@ -1,6 +1,6 @@
 package models
 
-import "sync"
+import "lib/session"
 
 // Game is a model for stroing the information for an individual title
 type Game struct {
@@ -9,30 +9,47 @@ type Game struct {
 	Platforms   string
 }
 
-// Storage for the singleton
-var (
-	once  sync.Once
-	games = []Game{}
-)
+// Key used to hold the user's viewed games in the session
+const vgSessionKey = "VIEWED_GAMES"
 
-// GetNextGame grabs the next Game and returns it
-func GetNextGame() Game {
-	// TODO: lookup user and check which titles they've viewed
-	return (*getTitles())[0]
+// Holds an array of Games which store info to be printed
+var games = []Game{
+	Game{
+		"A game",
+		"This is a cool game",
+		"Linux, Mac, Windows",
+	},
+	Game{
+		"Other game",
+		"This is a fun game",
+		"Linux, Android",
+	},
 }
 
-// getTitles returns the array of Games
-func getTitles() *[]Game {
-	// Thread-safe lazy singleton implementation
-	once.Do(func() {
-		// TODO: get real data
-		games = []Game{
-			Game{
-				"hello world",
-				"This is a cool game",
-				"Linux, Mac, Windows",
-			},
+// GetNextGame grabs the next unviewed Game for the given user and returns it
+func GetNextGame(session *session.Session) Game {
+	viewed := getViewedGames(session)
+	// Interate through the array and return the first unviewed game found
+	for _, game := range games {
+		if _, exists := (*viewed)[game.Title]; !exists {
+			(*viewed)[game.Title] = true
+			return game
 		}
-	})
-	return &games
+	}
+	// No unviewed games, so start from scratch
+	*viewed = make(map[string]bool)
+	(*viewed)[games[0].Title] = true
+	return games[0]
+}
+
+// getViewedGames returns a "set" of games that have already been viewd by the given user
+func getViewedGames(session *session.Session) *map[string]bool {
+	// If session already has a "set" return a pointer to it
+	if viewed, ok := session.Read(vgSessionKey).(*map[string]bool); ok && viewed != nil {
+		return viewed
+	}
+	// Otherwise, create a new "set"
+	viewed := make(map[string]bool)
+	session.Write(vgSessionKey, &viewed)
+	return &viewed
 }
