@@ -10,10 +10,12 @@ type Game struct {
 }
 
 // Storage for the singleton
-var once sync.Once
-var games = []Game{}
+var (
+	once  sync.Once
+	games = []Game{}
+)
 
-// GetNext grabs the next Game and returns it
+// GetNextGame grabs the next Game and returns it
 func GetNextGame() Game {
 	// TODO: lookup user and check which titles they've viewed
 	return (*getTitles())[0]

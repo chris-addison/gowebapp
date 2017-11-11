@@ -1,10 +1,9 @@
-<html>
-    <head>
-        <title>{{ .Title }}</title>
-    </head>
-    <body>
-        <p>{{ .Title }}</p>
-        <p>{{ .Description }}</p>
-        <p>{{ .Platforms }}</p>
-    </body>
-</html>
+{{define "head"}}
+<title>{{ .Title }}</title>
+{{end}}
+
+{{define "body"}}
+<p>{{ .Title }}</p>
+<p>{{ .Description }}</p>
+<p>{{ .Platforms }}</p>
+{{end}}

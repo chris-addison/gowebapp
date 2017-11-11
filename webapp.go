@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/models"
+	"app/routes"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -15,23 +15,14 @@ var pageTemplates = template.Must(template.ParseFiles(filepath.Join(cwd, "./temp
 
 // Initialises and start the webapp
 func main() {
-	fmt.Print("test")
+	fmt.Println("Initialising the app")
 
-	//routes.registerRoutes()
+	routes.RegisterRoutes()
 
-	http.HandleFunc("/", testViewHandler)
+	fmt.Println("Completed initialising the app")
+	fmt.Println("App starting")
 
 	http.ListenAndServe(":8080", nil)
-}
 
-func testViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
-	//result, _ := http.Get("https://unity3d.com//showcase/gallery/more/Default/featured/weight/1000")
-	//bytes, _ := ioutil.ReadAll(result.Body)
-	//fmt.Fprint(responseWriter, string(bytes))
-
-	data := models.GetNextGame()
-	error := pageTemplates.ExecuteTemplate(responseWriter, "test.html", data)
-	if error != nil {
-		http.Error(responseWriter, error.Error(), http.StatusInternalServerError)
-	}
+	fmt.Println("App finished")
 }
