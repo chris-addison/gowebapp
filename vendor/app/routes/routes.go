@@ -17,8 +17,8 @@ func testViewHandler(responseWriter http.ResponseWriter, request *http.Request) 
 	//fmt.Fprint(responseWriter, string(bytes))
 
 	data := models.GetNextGame()
-	error := views.Display(responseWriter, "test", data)
-	if error != nil {
+
+	if error := views.Display(responseWriter, "test", data); error != nil {
 		http.Error(responseWriter, error.Error(), http.StatusInternalServerError)
 	}
 }
