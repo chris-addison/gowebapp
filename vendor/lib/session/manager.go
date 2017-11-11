@@ -39,25 +39,32 @@ func (manager *Manager) Start(responseWriter http.ResponseWriter, request *http.
 
 	// Check if the client has a cookie with a session ID
 	cookie, err := request.Cookie(cookieName)
+	var sessionID string
 	if err != nil || cookie.Value == "" {
 		// Create a session ID to keep track of the session
-		sessionID := createSessionID()
-		session := NewSession(sessionID)
-		// Create the new session
-		manager.sessions[sessionID] = session
-		// Store the session in the client's cookies
-		http.SetCookie(responseWriter, &http.Cookie{
-			Name:     cookieName,
-			Value:    url.QueryEscape(sessionID),
-			Path:     "/",
-			HttpOnly: true,
-			MaxAge:   lifespan,
-		})
-		return session
+		sessionID = createSessionID()
+	} else {
+		sessionID, _ = url.QueryUnescape(cookie.Value)
+		// Use the client's session ID to get their session
+		// If session doesn't exist, drop through
+		if session, exists := manager.sessions[sessionID]; exists {
+			session.lastUsed = time.Now()
+			return session
+		}
 	}
-	// Use the client's session ID to get their session
-	sessionID, _ := url.QueryUnescape(cookie.Value)
-	return manager.sessions[sessionID]
+
+	// Create the new session
+	session := NewSession(sessionID)
+	manager.sessions[sessionID] = session
+	// Store the session in the client's cookies
+	http.SetCookie(responseWriter, &http.Cookie{
+		Name:     cookieName,
+		Value:    url.QueryEscape(sessionID),
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   lifespan,
+	})
+	return session
 }
 
 // End is a method that ends the session associated with the current user. If there is no session,
