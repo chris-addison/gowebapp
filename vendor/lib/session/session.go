@@ -8,7 +8,7 @@ import (
 // Session is an object with methods to load and store data for the current user.
 // There should be one session per user.
 type Session struct {
-	lock     sync.Mutex
+	Lock     sync.Mutex
 	id       string
 	lastUsed time.Time
 	values   map[string]interface{}
@@ -32,15 +32,11 @@ func (session *Session) Read(key string) interface{} {
 // Write associates the given key and value
 func (session *Session) Write(key string, value interface{}) {
 	session.lastUsed = time.Now()
-	session.lock.Lock()
 	session.values[key] = value
-	session.lock.Unlock()
 }
 
 // Delete removes the given key
 func (session *Session) Delete(key string) {
 	session.lastUsed = time.Now()
-	session.lock.Lock()
 	delete(session.values, key)
-	session.lock.Unlock()
 }

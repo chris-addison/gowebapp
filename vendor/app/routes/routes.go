@@ -7,15 +7,26 @@ import (
 	"net/http"
 )
 
-// RegisterRoutes registers all of the routes used by the app
-func RegisterRoutes() {
-	http.HandleFunc("/view", testViewHandler)
+// createRoute initialises a http request handler. This is a wrapper for the http.HandleFunc function
+// the main difference is that create route provides the current session. The session is locked for the duration of the request
+// to avoid any concurrency issues. Locking sessions in use is a common practice.
+func createRoute(pattern string, function func(responseWriter http.ResponseWriter, request *http.Request, session *session.Session)) {
+	viewHandler := func(responseWriter http.ResponseWriter, request *http.Request) {
+		session := session.GetManager().Start(responseWriter, request)
+		session.Lock.Lock()
+		defer session.Lock.Unlock()
+		function(responseWriter, request, session)
+	}
+	http.HandleFunc(pattern, viewHandler)
 }
 
-func testViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
-	currentSession := session.GetManager().Start(responseWriter, request)
+// RegisterRoutes registers all of the routes used by the app
+func RegisterRoutes() {
+	createRoute("/view", testViewHandler)
+}
 
-	data := models.GetNextGame(currentSession)
+func testViewHandler(responseWriter http.ResponseWriter, request *http.Request, session *session.Session) {
+	data := models.GetNextGame(session)
 
 	if error := views.Display(responseWriter, "test", data); error != nil {
 		http.Error(responseWriter, error.Error(), http.StatusInternalServerError)
