@@ -1,0 +1,14 @@
+{{define "head"}}
+<title>{{ .Title }}</title>
+{{end}}
+
+{{define "body"}}
+<div class="container">
+    <img class="rounded-circle" style="width: 150px; height: 150px; background: url({{ .Image }}) 50% 50% no-repeat"></img>
+    <p>{{ .Title }}</p>
+    <p>{{ .Developer }}</p>
+    <p>{{ .Description }}</p>
+    <p>{{ .Genre }}</p>
+    <p>{{ .Platforms }}</p>
+</div>
+{{end}}
