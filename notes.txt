@@ -1,4 +1,4 @@
-Page to scarpe: https://unity3d.com/showcase/gallery
+Page to scrape: https://unity3d.com/showcase/gallery
 
 link to grab a list of games. Currently, there are 599 titles, but 1000 should cover any increases
 https://unity3d.com//showcase/gallery/more/Default/all/weight/1000

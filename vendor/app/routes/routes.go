@@ -26,9 +26,13 @@ func RegisterRoutes() {
 }
 
 func testViewHandler(responseWriter http.ResponseWriter, request *http.Request, session *session.Session) {
-	data := models.GetNextGame(session)
+	data, err := models.GetNextGame(session)
+	if err != nil {
+		http.Error(responseWriter, "Unabled to fetch next game: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	if error := views.Display(responseWriter, "test", data); error != nil {
-		http.Error(responseWriter, error.Error(), http.StatusInternalServerError)
+	if err := views.Display(responseWriter, "test", data); err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
 	}
 }
