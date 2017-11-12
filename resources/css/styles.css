@@ -1,0 +1,33 @@
+/* Make the page fill all available space */
+html, body {
+    height: 100%;
+}
+
+/* Style for the body */
+body {
+    background: linear-gradient(to bottom, #FFF 25%,#BFBFBF);
+} 
+
+/* Style for the game thumbnail */
+.thumb {
+    width: 150px;
+    height: 150px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Title styling */
+.title {
+    font-weight: 300;
+}
+
+/* Link styling */
+a.link {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #00bcd4;
+    text-decoration-line: none;
+}
+a.link:hover {
+    color: #007bff;
+}

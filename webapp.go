@@ -15,6 +15,7 @@ func main() {
 	fmt.Println("Completed initialising the app")
 	fmt.Println("App starting")
 
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("resources/css"))))
 	http.ListenAndServe(":8080", nil)
 
 	fmt.Println("App finished")

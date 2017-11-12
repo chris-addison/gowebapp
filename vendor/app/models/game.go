@@ -18,6 +18,7 @@ type Game struct {
 	Genre       string
 	Platforms   string
 	Image       string
+	Link        string
 }
 
 // Key used to hold the user's viewed games in the session
@@ -94,12 +95,13 @@ func getGamesList() {
 		game := Game{}
 		game.Title = selection.Find(".title").Text()
 		game.Developer = selection.Find(".developer").Text()
-		game.Description = selection.Find(".description").Text()
+		game.Description = selection.Find(".description").Find("p").Text()
 		game.Genre = selection.Find(".genres").Text()
 		game.Platforms = strings.Join(selection.Find(".tip").Map(func(i int, platSelect *goquery.Selection) string {
 			return platSelect.Text()
 		}), ", ")
 		game.Image = selection.Find(".ic").AttrOr("src", "")
+		game.Link = selection.Find(".description").Find("a").AttrOr("href", "#")
 		temp[i] = game
 	})
 

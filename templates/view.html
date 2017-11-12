@@ -1,14 +1,23 @@
 {{define "head"}}
 <title>{{ .Title }}</title>
+<link href="/css/styles.css" rel="stylesheet"></link>
 {{end}}
 
 {{define "body"}}
-<div class="container">
-    <img class="rounded-circle" style="width: 150px; height: 150px; background: url({{ .Image }}) 50% 50% no-repeat"></img>
-    <p>{{ .Title }}</p>
-    <p>{{ .Developer }}</p>
-    <p>{{ .Description }}</p>
-    <p>{{ .Genre }}</p>
-    <p>{{ .Platforms }}</p>
+<div class="d-flex h-100">
+    <div class="holder my-auto w-100">
+        <div class="col-sm-8 col-lg-6 mx-auto">
+            <div class="row content text-center">
+                <div class="col-12">
+                    <div class="rounded-circle thumb mx-auto mb-1" style="background-image: url({{ .Image }})"></div>
+                    <h1 class="title">{{ .Title }}</h1>
+                    <p class="text-muted">by {{ .Developer }}</p>
+                    <p class="lead">{{ .Description }}</p>
+                    <p>{{ .Genre }} - {{ .Platforms }}</p>
+                    <a class="link" href="{{ .Link }}">Read more</a>
+                </div>        
+            </div>
+        </div>
+    </div>
 </div>
 {{end}}
