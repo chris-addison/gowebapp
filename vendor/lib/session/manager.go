@@ -17,13 +17,22 @@ type Manager struct {
 }
 
 // Time until session is destroyed
-const lifespan = 3600 * 3 // 3 hours
+const lifespan = 2 * time.Hour
+
 // Cookie name to save the session ID with
 const cookieName = "go-webapp-sessionid"
+
+// Frequency the sessions are cleared
+const cleanFrequency = 10 * time.Minute
 
 // Singleton storage
 var sessionManager = Manager{
 	sessions: make(map[string]*Session),
+}
+
+// Run a seperate thread to periodically clean the unused sessions
+func init() {
+	go cleanSessions()
 }
 
 // GetManager returns the session manager, which can be used to start and end sessions
@@ -62,7 +71,7 @@ func (manager *Manager) Start(responseWriter http.ResponseWriter, request *http.
 		Value:    url.QueryEscape(sessionID),
 		Path:     "/",
 		HttpOnly: true,
-		MaxAge:   lifespan,
+		MaxAge:   int(lifespan / time.Second),
 	})
 	return session
 }
@@ -98,4 +107,21 @@ func createSessionID() string {
 		return ""
 	}
 	return base64.URLEncoding.EncodeToString(token)
+}
+
+// cleanSessions is an asynchronous function to remove old sessions
+func cleanSessions() {
+	for {
+		// Use a channel to sleep the thread until the time duration is complete
+		<-time.After(cleanFrequency)
+
+		sessionManager.lock.Lock()
+		// Iterate through the map and remove entries that have expired
+		for id, session := range sessionManager.sessions {
+			if time.Now().After(session.lastUsed.Add(lifespan)) {
+				delete(sessionManager.sessions, id)
+			}
+		}
+		sessionManager.lock.Unlock()
+	}
 }
